@@ -27,14 +27,17 @@
 1. Select 'Create Cluster' from the 'Clusters' navigation menu
 1. Select 'RedHat OpenShift Container Platform'
 1. Select 'Run on Bare Metal'
-1. Download the following files:
-
-   - Openshift Installer for Linux
+1. Download the following file:
    - Pull secret
-   - Command Line Interface for Linux and your workstations OS
-   - Red Hat Enterprise Linux CoreOS (RHCOS)
-     - rhcos-X.X.X-x86_64-metal.x86_64.raw.gz
-     - rhcos-X.X.X-x86_64-installer.x86_64.iso (or rhcos-X.X.X-x86_64-live.x86_64.iso for newer versions)
+Navigate to the OpenShift Container Platform downloads page(https://access.redhat.com/downloads/content/290/ver=4.15/rhel---9/4.15.10/x86_64/product-software) on the Red Hat Customer Portal
+1. Select the appropriate version from the Version drop-down list
+1. Download the following file:
+1. - OpenShift v4.*.* Linux Client
+   - OpenShift v4.*.* Linux Installer
+   - 
+1. To get proper RHCOS image ISO file, running openshift-install coreos print-stream-json | grep '\.iso[^.]'
+2. Downlod file:
+  - rhcos-*.*.*-*-live.x86_64.iso
 
 ## Prepare the 'Bare Metal' environment
 
