@@ -34,10 +34,10 @@ Navigate to the OpenShift Container Platform downloads page(https://access.redha
 1. Download the following file:
    - OpenShift v4.*.* Linux Client: oc-4.*.*-linux.tar.gz
    - OpenShift v4.*.* Linux Installer: openshift-install-linux-4.*.*.tar.gz
-   - 
+     
 1. To get proper RHCOS image ISO file, running ~/openshift-install coreos print-stream-json | grep '\.iso[^.]'
-  Downlod file:
-  - rhcos-4*.*.*-*-live.x86_64.iso
+    Downlod file:
+    - rhcos-4*.*.*-*-live.x86_64.iso
 
 ## Prepare the 'Bare Metal' environment
 
