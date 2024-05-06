@@ -32,19 +32,19 @@
 Navigate to the OpenShift Container Platform downloads page(https://access.redhat.com/downloads/content/290/ver=4.15/rhel---9/4.15.10/x86_64/product-software) on the Red Hat Customer Portal
 1. Select the appropriate version from the Version drop-down list
 1. Download the following file:
-1. - OpenShift v4.*.* Linux Client
-   - OpenShift v4.*.* Linux Installer
+   - OpenShift v4.*.* Linux Client: oc-4.*.*-linux.tar.gz
+   - OpenShift v4.*.* Linux Installer: openshift-install-linux-4.*.*.tar.gz
    - 
-1. To get proper RHCOS image ISO file, running openshift-install coreos print-stream-json | grep '\.iso[^.]'
-2. Downlod file:
-  - rhcos-*.*.*-*-live.x86_64.iso
+1. To get proper RHCOS image ISO file, running ~/openshift-install coreos print-stream-json | grep '\.iso[^.]'
+  Downlod file:
+  - rhcos-4*.*.*-*-live.x86_64.iso
 
 ## Prepare the 'Bare Metal' environment
 
 > VMware ESXi used in this guide
 
 1. Copy the CentOS 8 iso to an ESXi datastore
-1. Create a new Port Group called 'OCP' under Networking
+1. Create a new Port Group called 'ocp-internal' under Networking
     - (In case of VirtualBox choose "Internal Network" when creating each VM and give it the same name. ocp for instance)
     - (In case of ProxMox you may use the same network bridge and choose a specific VLAN tag. 50 for instance) 
 1. Create 3 Control Plane virtual machines with minimum settings:
@@ -53,21 +53,24 @@ Navigate to the OpenShift Container Platform downloads page(https://access.redha
    - 8GB RAM
    - 50GB HDD
    - NIC connected to the OCP network
-   - Load the rhcos-X.X.X-x86_64-installer.x86_64.iso image into the CD/DVD drive
+   - Load the rhcos-*.*.*-*-live.x86_64.iso image into the CD/DVD drive
+   - Configuration Parameters: disk.EnableUUID=TRUE
 1. Create 2 Worker virtual machines (or more if you want) with minimum settings:
    - Name: ocp-w-# (Example ocp-w-1)
    - 4vcpu
    - 8GB RAM
    - 50GB HDD
    - NIC connected to the OCP network
-   - Load the rhcos-X.X.X-x86_64-installer.x86_64.iso image into the CD/DVD drive
+   - Load the rhcos-*.*.*-*-live.x86_64.iso image into the CD/DVD drive
+   - Configuration Parameters: disk.EnableUUID=TRUE
 1. Create a Bootstrap virtual machine (this vm will be deleted once installation completes) with minimum settings:
    - Name: ocp-boostrap
    - 4vcpu
    - 8GB RAM
    - 50GB HDD
    - NIC connected to the OCP network
-   - Load the rhcos-X.X.X-x86_64-installer.x86_64.iso image into the CD/DVD drive
+   - Load the rhcos-*.*.*-*-live.x86_64.iso image into the CD/DVD drive
+   - Configuration Parameters: disk.EnableUUID=TRUE
 1. Create a Services virtual machine with minimum settings:
    - Name: ocp-svc
    - 4vcpu
@@ -93,7 +96,7 @@ Navigate to the OpenShift Container Platform downloads page(https://access.redha
 1. Move the files downloaded from the RedHat Cluster Manager site to the ocp-svc node
 
    ```bash
-   scp ~/Downloads/openshift-install-linux.tar.gz ~/Downloads/openshift-client-linux.tar.gz ~/Downloads/rhcos-metal.x86_64.raw.gz root@{ocp-svc_IP_address}:/root/
+   scp ~/Downloads/openshift-install-linux.tar.gz ~/Downloads/oc-4.*.*-linux.tar.gz root@{ocp-svc_IP_address}:/root/
    ```
 
 1. SSH to the ocp-svc vm
@@ -105,7 +108,7 @@ Navigate to the OpenShift Container Platform downloads page(https://access.redha
 1. Extract Client tools and copy them to `/usr/local/bin`
 
    ```bash
-   tar xvf openshift-client-linux.tar.gz
+   tar xvf oc-4.*.*-linux.tar.gz
    mv oc kubectl /usr/local/bin
    ```
 
@@ -119,7 +122,7 @@ Navigate to the OpenShift Container Platform downloads page(https://access.redha
 1. Extract the OpenShift Installer
 
    ```bash
-   tar xvf openshift-install-linux.tar.gz
+   tar xvf openshift-install-linux-4.*.*.tar.gz
    ```
 
 1. Update CentOS so we get the latest packages for each of the services we are about to install
@@ -134,10 +137,10 @@ Navigate to the OpenShift Container Platform downloads page(https://access.redha
    dnf install git -y
    ```
 
-1. Download [config files](https://github.com/ryanhay/ocp4-metal-install) for each of the services
+1. Download [config files](https://github.com/rivertb/ocp4-metal-install) for each of the services
 
    ```bash
-   git clone https://github.com/ryanhay/ocp4-metal-install
+   git clone https://github.com/rivertb/ocp4-metal-install
    ```
 
 1. OPTIONAL: Create a file '~/.vimrc' and paste the following (this helps with editing in vim, particularly yaml files):
@@ -156,7 +159,7 @@ Navigate to the OpenShift Container Platform downloads page(https://access.redha
    export KUBE_EDITOR="vim"
    ```
 
-1. Set a Static IP for OCP network interface `nmtui-edit ens224` or edit `/etc/sysconfig/network-scripts/ifcfg-ens224`
+1. Set a Static IP for OCP network interface `nmtui-edit ens34` or edit `/etc/sysconfig/network-scripts/ifcfg-ens34`
 
    - **Address**: 192.168.22.1
    - **DNS Server**: 127.0.0.1
@@ -164,15 +167,15 @@ Navigate to the OpenShift Container Platform downloads page(https://access.redha
    - Never use this network for default route
    - Automatically connect
 
-   > If changes arent applied automatically you can bounce the NIC with `nmcli connection down ens224` and `nmcli connection up ens224`
+   > If changes arent applied automatically you can bounce the NIC with `nmcli connection down ens34` and `nmcli connection up ens34`
 
 1. Setup firewalld
 
    Create **internal** and **external** zones
 
    ```bash
-   nmcli connection modify ens224 connection.zone internal
-   nmcli connection modify ens192 connection.zone external
+   nmcli connection modify ens34 connection.zone internal
+   nmcli connection modify ens33 connection.zone external
    ```
 
    View zones:
@@ -183,7 +186,7 @@ Navigate to the OpenShift Container Platform downloads page(https://access.redha
 
    Set masquerading (source-nat) on the both zones.
 
-   So to give a quick example of source-nat - for packets leaving the external interface, which in this case is ens192 - after they have been routed they will have their source address altered to the interface address of ens192 so that return packets can find their way back to this interface where the reverse will happen.
+   So to give a quick example of source-nat - for packets leaving the external interface, which in this case is ens33 - after they have been routed they will have their source address altered to the interface address of ens33 so that return packets can find their way back to this interface where the reverse will happen.
 
    ```bash
    firewall-cmd --zone=external --add-masquerade --permanent
@@ -243,10 +246,10 @@ Navigate to the OpenShift Container Platform downloads page(https://access.redha
 
    > At the moment DNS will still be pointing to the LAN DNS server. You can see this by testing with `dig ocp.lan`.
 
-   Change the LAN nic (ens192) to use 127.0.0.1 for DNS AND ensure `Ignore automatically Obtained DNS parameters` is ticked
+   Change the LAN nic (ens33) to use 127.0.0.1 for DNS AND ensure `Ignore automatically Obtained DNS parameters` is ticked
 
    ```bash
-   nmtui-edit ens192
+   nmtui-edit ens33
    ```
 
    Restart Network Manager
@@ -480,11 +483,12 @@ Navigate to the OpenShift Container Platform downloads page(https://access.redha
 
 ## Deploy OpenShift
 
-1. Power on the ocp-bootstrap host and ocp-cp-\# hosts and select 'Tab' to enter boot configuration. Enter the following configuration:
+1. Power on the ocp-bootstrap host and ocp-cp-\# hosts and waite for it boot. Enter the following configuration:
 
+   ```bash
+   # Bootstrap Node - ocp-bootstrap.
    # Use the following command then just reboot after it finishes and make sure you remove the attached .iso
    sudo coreos-installer install --ignition-url=http://192.168.22.1:8080/ocp4/bootstrap.ign /dev/sda --insecure-ignition
-
    ```
 
    ```bash
