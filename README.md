@@ -264,6 +264,28 @@ Navigate to the OpenShift Container Platform downloads page(https://access.redha
    dig ocp.lan
    # The following should return the answer ocp-bootstrap.lab.ocp.lan from the local server
    dig -x 192.168.22.200
+   
+   dig +noall +answer @192.168.2.1 api.lab.ocp.lan
+   api.lab.ocp.lan.		604800	IN	A	192.168.2.1
+
+   dig +noall +answer @192.168.2.1 api-int.lab.ocp.lan
+   api-int.lab.ocp.lan.		604800	IN	A	192.168.2.1
+
+   dig +noall +answer @192.168.2.1 random.apps.lab.ocp.lan
+   random.apps.lab.ocp.lan.		604800	IN	A	192.168.2.1
+
+   dig +noall +answer @192.168.2.1 console-openshift-console.apps.lab.ocp.lan
+   console-openshift-console.apps.lab.ocp.lan. 604800 IN	A 192.168.2.1
+
+   dig +noall +answer @192.168.2.1 ocp-bootstrap.lab.ocp.lan
+   ocp-bootstrap.lab.ocp.lan.		604800	IN	A	192.168.2.200
+
+   dig +noall +answer @192.168.2.1 -x 192.168.2.1
+   5.1.168.192.in-addr.arpa. 604800	IN	PTR	api-int.lab.ocp.lan.
+   5.1.168.192.in-addr.arpa. 604800	IN	PTR	api.lab.ocp.lan.
+
+   dig +noall +answer @192.168.2.1 -x 192.168.2.200
+   96.1.168.192.in-addr.arpa. 604800	IN	PTR	ocp-bootstrap.lab.ocp.lan.
    ```
 
 1. Install & configure DHCP
@@ -415,7 +437,10 @@ Navigate to the OpenShift Container Platform downloads page(https://access.redha
 1. Generate an SSH key pair keeping all default options
 
    ```bash
-   ssh-keygen
+   ssh-keygen -t ed25519 -N '' -f ~/.ssh/id_ed25519
+
+   eval "$(ssh-agent -s)"
+   ssh-add  ~/.ssh/id_ed25519  
    ```
 
 1. Create an install directory
