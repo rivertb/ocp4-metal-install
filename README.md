@@ -161,7 +161,7 @@ Navigate to the OpenShift Container Platform downloads page(https://access.redha
 
 1. Set a Static IP for OCP network interface `nmtui-edit ens34` or edit `/etc/sysconfig/network-scripts/ifcfg-ens34`
 
-   - **Address**: 192.168.22.1
+   - **Address**: 192.168.2.1
    - **DNS Server**: 127.0.0.1
    - **Search domain**: ocp.lan
    - Never use this network for default route
@@ -263,7 +263,7 @@ Navigate to the OpenShift Container Platform downloads page(https://access.redha
    ```bash
    dig ocp.lan
    # The following should return the answer ocp-bootstrap.lab.ocp.lan from the local server
-   dig -x 192.168.22.200
+   dig -x 192.168.2.200
    
    dig +noall +answer @192.168.2.1 api.lab.ocp.lan
    api.lab.ocp.lan.		604800	IN	A	192.168.2.1
@@ -412,7 +412,7 @@ Navigate to the OpenShift Container Platform downloads page(https://access.redha
    Export the Share
 
    ```bash
-   echo "/shares/registry  192.168.22.0/24(rw,sync,root_squash,no_subtree_check,no_wdelay)" > /etc/exports
+   echo "/shares/registry  192.168.2.0/24(rw,sync,root_squash,no_subtree_check,no_wdelay)" > /etc/exports
    exportfs -rv
    ```
 
@@ -513,12 +513,12 @@ Navigate to the OpenShift Container Platform downloads page(https://access.redha
    ```bash
    # Bootstrap Node - ocp-bootstrap.
    # Use the following command then just reboot after it finishes and make sure you remove the attached .iso
-   sudo coreos-installer install --ignition-url=http://192.168.22.1:8080/ocp4/bootstrap.ign /dev/sda --insecure-ignition
+   sudo coreos-installer install --ignition-url=http://192.168.2.1:8080/ocp4/bootstrap.ign /dev/sda --insecure-ignition
    ```
 
    ```bash
    # Each of the Control Plane Nodes - ocp-cp-\#
-   sudo coreos-installer install --ignition-url=http://192.168.22.1:8080/ocp4/master.ign /dev/sda --insecure-ignition
+   sudo coreos-installer install --ignition-url=http://192.168.2.1:8080/ocp4/master.ign /dev/sda --insecure-ignition
    ```
 
 1. Power on the ocp-w-\# hosts and select 'Tab' to enter boot configuration. Enter the following configuration:
@@ -526,7 +526,7 @@ Navigate to the OpenShift Container Platform downloads page(https://access.redha
    ```bash
    # Each of the Worker Nodes - ocp-w-\#
    # Waite for it boot, use the following command then just reboot after it finishes and make sure you remove the attached .iso
-   sudo coreos-installer install --ignition-url=http://192.168.22.1:8080/ocp4/worker.ign /dev/sda --insecure-ignition
+   sudo coreos-installer install --ignition-url=http://192.168.2.1:8080/ocp4/worker.ign /dev/sda --insecure-ignition
    ```
 
 ## Monitor the Bootstrap Process
@@ -681,7 +681,7 @@ Navigate to the OpenShift Container Platform downloads page(https://access.redha
 1. You can collect logs from all cluster hosts by running the following command from the 'ocp-svc' host:
 
    ```bash
-   ./openshift-install gather bootstrap --dir ocp-install --bootstrap=192.168.22.200 --master=192.168.22.201 --master=192.168.22.202 --master=192.168.22.203
+   ./openshift-install gather bootstrap --dir ocp-install --bootstrap=192.168.2.200 --master=192.168.2.201 --master=192.168.2.202 --master=192.168.2.203
    ```
 
 1. Modify the role of the Control Plane Nodes
