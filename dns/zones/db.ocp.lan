@@ -1,5 +1,5 @@
 $TTL 1W
-@       IN      SOA     ns1.ocp.lan.    root (
+@       IN      SOA     ocp-svc.ocp.lan.    smtp (
                         2019070700      ; serial
                         3H              ; refresh (3 hours)
                         30M             ; retry (30 minutes)
