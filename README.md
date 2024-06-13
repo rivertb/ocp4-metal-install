@@ -638,7 +638,7 @@ Navigate to the OpenShift Container Platform downloads page(https://access.redha
 
 1. Apply the `oauth-htpasswd.yaml` file to the cluster
 
-   > This will create a user 'admin' with the password 'password'. To set a different username and password substitue the htpasswd key in the '~/ocp4-metal-install/manifest/oauth-htpasswd.yaml' file with the output of `htpasswd -n -B -b <username> <password>`
+   > This will create a user 'admin' with the password 'password'. To set a different username and password substitue the htpasswd key in the '~/ocp4-metal-install/manifest/oauth-htpasswd.yaml' file with the output of `htpasswd -n -B -b <username> <password>`   echo -n <username>:<password> | base64 -w0 
 
    ```bash
    oc apply -f ~/ocp4-metal-install/manifest/oauth-htpasswd.yaml
