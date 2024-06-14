@@ -435,8 +435,9 @@ Navigate to the OpenShift Container Platform downloads page(https://access.redha
    Change timezone to UTC according to rhcos
    ```bash
    timedatectl set-timezone UTC
-   systemctl restart chronyd
-   chronyc trace
+   systemctl enable chronyd
+   systemctl start chronyd
+   chronyc tracking
    chronyc sources
    ```
 
