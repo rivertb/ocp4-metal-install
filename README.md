@@ -431,6 +431,14 @@ Navigate to the OpenShift Container Platform downloads page(https://access.redha
    systemctl enable nfs-server rpcbind
    systemctl start nfs-server rpcbind nfs-mountd
    ```
+   
+   Change timezone to UTC according to rhcos
+   ```bash
+   timedatectl set-timezone UTC
+   systemctl restart chronyd
+   chronyc trace
+   chronyc sources
+   ```
 
 ## Generate and host install files
 
