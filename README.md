@@ -544,6 +544,14 @@ Navigate to the OpenShift Container Platform downloads page(https://access.redha
 
    ```bash
    ~/openshift-install --dir ~/ocp-install wait-for bootstrap-complete --log-level=debug
+
+   ssh core@192.168.2.200
+
+   journalctl -b -f -u release-image.service -u bootkube.service
+
+   sudo crictl images
+
+   sudo crictl ps
    ```
 
 1. Once bootstrapping is complete the ocp-boostrap node [can be removed](#remove-the-bootstrap-node)
